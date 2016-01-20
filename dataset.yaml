@@ -1,3 +1,24 @@
+ftp:
+  - host: cmems-med-mfc.eu
+    basepath: /Core/MEDSEA_REANALYSIS_PHYS_006_004/cmemsv02-med-ingv-cur-rean-d/
+    sizes:
+     - 3
+     - 10
+     - 47
+    names:
+     - test 1.1.1
+     - test 1.2.1
+     - test 1.3.1
+  - host: cmems-med-mfc.eu
+    basepath: /Core/MEDSEA_ANALYSIS_FORECAST_PHYS_006_001/cmemsv02-med-ingv-cur-an-fc-d/
+    sizes:
+     - 2
+     - 7
+     - 33
+    names:
+     - test 2.1.1
+     - test 2.2.1
+     - test 2.3.1
 motu:
   - service_id: http://purl.org/myocean/ontology/service/database#MEDSEA_REANALYSIS_BIO_006_008-FILE
     product_id: http://purl.org/myocean/ontology/product/database#myov05-med-ogs-bio-rean
