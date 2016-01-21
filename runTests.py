@@ -127,6 +127,5 @@ logging.getLogger().addHandler(summary)
 
 dataset = yaml.load(open("dataset.yaml"))
 
-ret = populateFTP(dataset)
-runFTPTest(*ret[0][1])
-print runFTPTest({})
+for f,d in populateFTP(dataset):
+  runFTPTest(*d)
