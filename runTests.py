@@ -95,10 +95,10 @@ def runFTPTest(host,basepath,files,name,round):
    t= datetime.datetime.now() - t
    ret = {
       "size": size,
-      "download": t
+      "download": t.total_second()
    }
    print  "\n",ret
-   json.dump(ret ,open(target))
+   json.dump(ret ,open(target,"w"))
 
 def populateFTP(dataset):
    conf = FTPConf()
