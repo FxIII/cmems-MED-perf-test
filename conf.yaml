@@ -1,10 +1,10 @@
 motu: http://cmems-med-mfc.eu/mis-gateway-servlet/Motu
-service_id: http://purl.org/myocean/ontology/service/database#MEDSEA_REANALYSIS_BIO_006_008-FILE
-product_id: http://purl.org/myocean/ontology/product/database#myov05-med-ogs-bio-rean
+service_id: http://purl.org/myocean/ontology/service/database#MEDSEA_ANALYSIS_FORECAST_PHYS_006_001-TDS
+product_id: http://purl.org/myocean/ontology/product/database#cmemsv02-med-ingv-cur-an-fc-d
 out_dir: ./
 out_name: trash
-date_min: '2012-12-01'
-date_max: '2012-12-01'
+date_min: '2013-01-01'
+date_max: '2013-01-01'
 proxy_server: null
 depth_min: null
 depth_max: null
@@ -14,6 +14,11 @@ longitude_min: null
 longitude_max: null
 describe: no
 sync: yes
-variable: null
+variable:
+ - vomecrty
+ - vozocrtx
+# - somestdy
+# - sowavenu
+# - sozostdx
 socket_timeout: null
 block_size: 65536

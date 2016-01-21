@@ -9,6 +9,19 @@ from motu_api import execute_request
 from itertools import cycle 
 import json
 import datetime
+import math
+from pprint import pprint 
+import re 
+
+def str2Delta(s):
+    if s is None:
+        return None
+    d = re.match(
+            r'((?P<days>\d+) days, )?(?P<hours>\d+):'
+            r'(?P<minutes>\d+):(?P<seconds>\d+)',
+            str(s)).groupdict(0)
+    return datetime.timedelta(**dict(( (key, int(value))
+                              for key, value in d.items() )))  
 
 class MotuConf:
   def __init__(self):
@@ -51,23 +64,39 @@ class SummaryHandler(logging.Handler):
         if record.msg.startswith("File size"):
           self.summary.fileSize= record.message
         if record.msg.startswith("Processing  time"):
-          self.summary.processing = record.args[0]
+          self.summary.processing = str2Delta(record.args[0])
         if record.msg.startswith("Downloading time"):
-          self.summary.downloading = record.args[0]
+          self.summary.downloading = str2Delta(record.args[0])
         if record.msg.startswith("Download rate"):
           self.summary.rate = "%s/s"%record.args[0]
         if record.msg.startswith("Total time"):
-          self.summary.total = record.args[0]
+          self.summary.total = str2Delta(record.args[0])
     def getResults(self):
 	ret = self.summary
 	self.summary = Summary()
 	return ret
 
-def runMotuTest(data):
+def runMotuTest(name, round, data):
+   try: 
+       os.makedirs(name)
+   except OSError:
+       if not os.path.isdir(name):
+          raise
+   target = os.path.join(name,str(round)+".json")
+   print "running",name,round
+   if os.path.exists(target):
+      return
    conf = MotuConf()
    conf.update(data)
    execute_request(conf)
-   return summary.getResults()
+   results = summary.getResults()
+   ret = {
+      "size": results.fileSize,
+      "download": results.downloading.total_seconds(),
+      "processing": results.processing.total_seconds(),
+      "total": (results.processing + results.downloading).total_seconds(),
+   }
+   json.dump(ret ,open(target,"w"))
 
 def runFTPTest(host,basepath,files,name,round):
    try: 
@@ -97,14 +126,12 @@ def runFTPTest(host,basepath,files,name,round):
       "size": size,
       "download": t.total_seconds()
    }
-   print  "\n",ret
    json.dump(ret ,open(target,"w"))
 
 def populateFTP(dataset):
    conf = FTPConf()
    ret = []
    for test in dataset["ftp"]:
-      print test["host"],test
       ftp = ftplib.FTP(test["host"],conf.user,conf.pwd)
       ftp.cwd(test["basepath"])
       pool = cycle([ i for i in ftp.nlst() if i.endswith(".nc.gz")])
@@ -112,10 +139,33 @@ def populateFTP(dataset):
          for round in xrange(10):
          	files = [f for f,i in zip(pool,xrange(size))]
          	ret.append(("runFTPTest",(test["host"],test["basepath"],files,name,round)))
-         	for f in files:
-         	  print name, round, f
    return ret
-   
+def populateMotu(dataset):
+    for test in dataset["motu"]:
+        baseconf = {k: test[k] for k in ["service_id","product_id"]}
+        def dateRange(range):
+            d = range[0]
+            while True:
+              yield d
+              d = d + datetime.timedelta(1)
+              if d > range[1]:
+                return
+        def getStrides(dataSize,span,strideNumber):
+          step = (dataSize - span) / (strideNumber - 1)
+          return [int(math.floor(step * i)) for i in xrange(strideNumber)]
+        dates = list(dateRange(test["date_range"]))
+        ret = []
+        for size in test["sizes"]:
+           span = size["dates"]
+           strides = getStrides(len(dates), span, 10)
+           for round,stride in enumerate(strides):
+             conf = dict(baseconf)
+             conf.update(size["conf"])
+             conf["date_min"] = str(dates[stride])
+             conf["date_max"] = str(dates[stride+span-1])
+             ret.append((size["name"],round,conf))
+        return ret
+                           	
 logging.addLevelName(utils_log.TRACE_LEVEL, 'TRACE')
 logging.config.fileConfig(  os.path.join(os.path.dirname(__file__),'motu-client-python/etc/log.ini') )
 log = logging.getLogger("motu-client-python")
@@ -127,5 +177,7 @@ logging.getLogger().addHandler(summary)
 
 dataset = yaml.load(open("dataset.yaml"))
 
-for f,d in populateFTP(dataset):
-  runFTPTest(*d)
+# for f,d in populateFTP(dataset):
+#   runFTPTest(*d)
+
+runMotuTest(*populateMotu(dataset)[0])

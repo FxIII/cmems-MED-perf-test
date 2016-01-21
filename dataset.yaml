@@ -7,8 +7,8 @@ ftp:
      - 47
     names:
      - test 1.1.1
-     - test 1.2.1
-     - test 1.3.1
+     - test 2.1.1
+     - test 3.1.1
   - host: cmems-med-mfc.eu
     basepath: /Core/MEDSEA_ANALYSIS_FORECAST_PHYS_006_001/cmemsv02-med-ingv-cur-an-fc-d/
     sizes:
@@ -16,73 +16,55 @@ ftp:
      - 7
      - 33
     names:
-     - test 2.1.1
+     - test 1.2.1
      - test 2.2.1
-     - test 2.3.1
+     - test 3.2.1
 motu:
-  - service_id: http://purl.org/myocean/ontology/service/database#MEDSEA_REANALYSIS_BIO_006_008-FILE
-    product_id: http://purl.org/myocean/ontology/product/database#myov05-med-ogs-bio-rean
+  - service_id: http://purl.org/myocean/ontology/service/database#MEDSEA_ANALYSIS_FORECAST_PHYS_006_001-FILE
+    product_id: http://purl.org/myocean/ontology/product/database#cmemsv02-med-ingv-cur-an-fc-d
+    date_range: [ 2012-12-02 , 2013-01-01 ] 
     sizes:
-      small:
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      medium:
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      large:
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
-      - date_min: '2012-12-01'
-        date_max: '2012-12-01'
+      - conf: {}
+        dates: 2
+        name: test 1.1.2
+      - conf: {}
+        dates: 7
+        name: test 2.1.2
+      - conf: {}
+        dates: 31
+        name: test 3.1.2
+  - service_id: http://purl.org/myocean/ontology/service/database#MEDSEA_ANALYSIS_FORECAST_PHYS_006_001-TDS
+    product_id: http://purl.org/myocean/ontology/product/database#cmemsv02-med-ingv-cur-an-fc-d
+    date_range: [ 2012-12-02 , 2013-01-01 ] 
+    sizes:
+      - conf:
+         depth_min: 0
+         depth_max: 2448.21
+         variable:
+          - vomecrty
+          - sozostdx          
+        dates: 1
+        name: test 1.1.3
+      - conf:
+         depth_min: 0
+         depth_max: 2794.61
+         variable:
+          - vomecrty
+          - vozocrtx
+          - somestdy
+          - sowavenu
+          - sozostdx
+        dates: 2
+        name: test 2.1.3
+      - conf:
+         depth_min: 0
+         depth_max: 2794.61
+         variable:
+          - vomecrty
+          - vozocrtx
+          - somestdy
+          - sowavenu
+          - sozostdx
+        dates: 10
+        name: test 3.1.3
+        
