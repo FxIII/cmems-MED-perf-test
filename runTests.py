@@ -95,7 +95,7 @@ def runFTPTest(host,basepath,files,name,round):
    t= datetime.datetime.now() - t
    ret = {
       "size": size,
-      "download": t.total_second()
+      "download": t.total_seconds()
    }
    print  "\n",ret
    json.dump(ret ,open(target,"w"))
