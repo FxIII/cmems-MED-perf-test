@@ -180,4 +180,5 @@ dataset = yaml.load(open("dataset.yaml"))
 # for f,d in populateFTP(dataset):
 #   runFTPTest(*d)
 
-runMotuTest(*populateMotu(dataset)[0])
+for d in populateMotu(dataset):
+  runMotuTest(*d)
