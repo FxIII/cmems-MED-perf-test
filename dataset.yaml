@@ -20,6 +20,19 @@ ftp:
      - test 2.2.1
      - test 3.2.1
 motu:
+  - service_id: http://purl.org/myocean/ontology/service/database#MEDSEA_REANALYSIS_PHYS_006_004-FILE
+    product_id: http://purl.org/myocean/ontology/product/database#cmemsv02-med-ingv-cur-rean-d
+    date_range: [ 2014-01-02 , 2014-09-01 ] 
+    sizes:
+      - conf: {}
+        dates: 3
+        name: test 1.2.2
+      - conf: {}
+        dates: 10
+        name: test 2.2.2
+      - conf: {}
+        dates: 50
+        name: test 3.2.2
   - service_id: http://purl.org/myocean/ontology/service/database#MEDSEA_REANALYSIS_PHYS_006_004-TDS
     product_id: http://purl.org/myocean/ontology/product/database#cmemsv02-med-ingv-cur-rean-d
     date_range: [ 2014-01-02 , 2014-09-01 ] 

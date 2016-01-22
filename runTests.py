@@ -177,8 +177,9 @@ logging.getLogger().addHandler(summary)
 
 dataset = yaml.load(open("dataset.yaml"))
 
-# for f,d in populateFTP(dataset):
-#   runFTPTest(*d)
-
 for d in populateMotu(dataset):
   runMotuTest(*d)
+
+ for f,d in populateFTP(dataset):
+   runFTPTest(*d)
+
