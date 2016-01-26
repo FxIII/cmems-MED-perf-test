@@ -57,12 +57,17 @@ class Summary:
          
 	
 class SummaryHandler(logging.Handler):
+    fileSizeRE = re.compile("\((.*) B")
     def __init__(self,*a,**k):
         logging.Handler.__init__(self,*a,**k)
 	self.summary = Summary()
+    @classmethod
+    def fileSize2Bytes(cls,fileSize):
+      return int(cls.fileSizeRE.search(fileSize).groups()[0])
     def emit(self, record):
         if record.msg.startswith("File size"):
-          self.summary.fileSize= record.message
+          self.summary.fileSizeStr= record.message
+          self.summary.fileSize = self.fileSize2Bytes(record.message)
         if record.msg.startswith("Processing  time"):
           self.summary.processing = str2Delta(record.args[0])
         if record.msg.startswith("Downloading time"):
@@ -123,7 +128,7 @@ def runFTPTest(host,basepath,files,name,round):
     	ftp.retrbinary('RETR %s'%file, update)
    t= datetime.datetime.now() - t
    ret = {
-      "size": size,
+      "size": size[0],
       "download": t.total_seconds()
    }
    json.dump(ret ,open(target,"w"))
@@ -141,6 +146,7 @@ def populateFTP(dataset):
          	ret.append(("runFTPTest",(test["host"],test["basepath"],files,name,round)))
    return ret
 def populateMotu(dataset):
+    ret =[]
     for test in dataset["motu"]:
         baseconf = {k: test[k] for k in ["service_id","product_id"]}
         def dateRange(range):
@@ -154,7 +160,6 @@ def populateMotu(dataset):
           step = (dataSize - span) / (strideNumber - 1)
           return [int(math.floor(step * i)) for i in xrange(strideNumber)]
         dates = list(dateRange(test["date_range"]))
-        ret = []
         for size in test["sizes"]:
            span = size["dates"]
            strides = getStrides(len(dates), span, 10)
@@ -164,7 +169,7 @@ def populateMotu(dataset):
              conf["date_min"] = str(dates[stride])
              conf["date_max"] = str(dates[stride+span-1])
              ret.append((size["name"],round,conf))
-        return ret
+    return ret
                            	
 logging.addLevelName(utils_log.TRACE_LEVEL, 'TRACE')
 logging.config.fileConfig(  os.path.join(os.path.dirname(__file__),'motu-client-python/etc/log.ini') )
@@ -180,6 +185,22 @@ dataset = yaml.load(open("dataset.yaml"))
 for d in populateMotu(dataset):
   runMotuTest(*d)
 
- for f,d in populateFTP(dataset):
-   runFTPTest(*d)
+for f,d in populateFTP(dataset):
+  runFTPTest(*d)
 
+results={ d[7:]: [ json.load(open(os.path.join(d,f))) 
+                      for f in files if f.endswith(".json")] 
+                   for  d,s,files in os.walk(".") if d.startswith("./test")}
+
+print results
+res = {}
+for k,vs in results.items():
+   ret = dict(vs[0])
+   for v in vs[1:]:
+      for subkey in v:
+          ret[subkey] += v[subkey]
+      for subkey in v:
+          ret[subkey] /= len(vs)
+   print k,ret
+   res[k] = ret
+json.dump(res, open("results.json","w"),sort_keys=True,indent=4, separators=(',', ': '))
